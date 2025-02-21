@@ -61,7 +61,7 @@ def get_prediction(
     full_shape=None,
     postprocess: Optional[PostprocessPredictions] = None,
     verbose: int = 0,
-) -> PredictionResult:
+) -> List[PredictionResult]:
     """
     Function for performing prediction for given image using given detection_model.
 
@@ -87,13 +87,15 @@ def get_prediction(
     durations_in_seconds = dict()
 
     # read image as pil
-    image_as_pil = read_image_as_pil(image)
+    # image_as_pil = read_image_as_pil(image)
     # get prediction
     time_start = time.time()
-    detection_model.perform_inference(np.ascontiguousarray(image_as_pil))
+    images=[np.ascontiguousarray(read_image_as_pil(im)) for im in image]
+    detection_model.perform_inference(images)
+    # detection_model.perform_inference(np.ascontiguousarray(images))
     time_end = time.time() - time_start
     durations_in_seconds["prediction"] = time_end
-
+    print("model infer time ",time_end)
     # process prediction
     time_start = time.time()
     # works only with 1 batch
@@ -101,14 +103,15 @@ def get_prediction(
         shift_amount=shift_amount,
         full_shape=full_shape,
     )
-    object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
-
-    # postprocess matching predictions
-    if postprocess is not None:
-        object_prediction_list = postprocess(object_prediction_list)
+    # object_prediction_list: List[ObjectPrediction] = detection_model.object_prediction_list
+    # # print("here is object prediction list @@@",object_prediction_list.segmentation[0][0])
+    # # postprocess matching predictions
+    # if postprocess is not None:
+    #     object_prediction_list = postprocess(object_prediction_list)
 
     time_end = time.time() - time_start
     durations_in_seconds["postprocess"] = time_end
+    print("move seg time", time_end)
 
     if verbose == 1:
         print(
@@ -117,9 +120,9 @@ def get_prediction(
             "seconds.",
         )
 
-    return PredictionResult(
-        image=image, object_prediction_list=object_prediction_list, durations_in_seconds=durations_in_seconds
-    )
+    return [PredictionResult(
+            image=images[ind], object_prediction_list=detection_model.object_prediction_list_per_image[ind], durations_in_seconds=durations_in_seconds
+        ) for ind in range(len(images))]
 
 
 def get_sliced_prediction(
@@ -235,7 +238,7 @@ def get_sliced_prediction(
     # create prediction input
     num_group = int(num_slices / num_batch)
     if verbose == 1 or verbose == 2:
-        tqdm.write(f"Performing prediction on {num_slices} slices.")
+        tqdm.write(f"Performing prediction on {num_slices} slices. slice size {slice_image_result.images[0].shape}")
     object_prediction_list = []
     # perform sliced prediction
     for group_ind in range(num_group):
@@ -247,19 +250,20 @@ def get_sliced_prediction(
             shift_amount_list.append(slice_image_result.starting_pixels[group_ind * num_batch + image_ind])
         # perform batch prediction
         prediction_result = get_prediction(
-            image=image_list[0],
+            image=image_list,
             detection_model=detection_model,
-            shift_amount=shift_amount_list[0],
+            shift_amount=shift_amount_list,
             full_shape=[
                 slice_image_result.original_image_height,
                 slice_image_result.original_image_width,
             ],
         )
         # convert sliced predictions to full predictions
-        for object_prediction in prediction_result.object_prediction_list:
-            if object_prediction:  # if not empty
-                object_prediction_list.append(object_prediction.get_shifted_object_prediction())
-
+        for prediction_result_per_image in prediction_result:
+            for object_prediction in prediction_result_per_image.object_prediction_list:
+                if object_prediction:  # if not empty
+                    object_prediction_list.append(object_prediction.get_shifted_object_prediction())
+        print("the len of object_prediction_list is ",len(object_prediction_list))
         # merge matching predictions during sliced prediction
         if merge_buffer_length is not None and len(object_prediction_list) > merge_buffer_length:
             object_prediction_list = postprocess(object_prediction_list)
@@ -267,7 +271,7 @@ def get_sliced_prediction(
     # perform standard prediction
     if num_slices > 1 and perform_standard_pred:
         prediction_result = get_prediction(
-            image=image,
+            image=[image],
             detection_model=detection_model,
             shift_amount=[0, 0],
             full_shape=[
@@ -276,7 +280,7 @@ def get_sliced_prediction(
             ],
             postprocess=None,
         )
-        object_prediction_list.extend(prediction_result.object_prediction_list)
+        object_prediction_list.extend(prediction_result[0].object_prediction_list)
 
     # merge matching predictions
     if len(object_prediction_list) > 1:

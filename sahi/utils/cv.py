@@ -639,8 +639,8 @@ def get_bool_mask_from_coco_segmentation(coco_segmentation: List[List[float]], w
     points = [np.array(point).reshape(-1, 2).round().astype(int) for point in coco_segmentation]
     bool_mask = np.zeros(size)
     bool_mask = cv2.fillPoly(bool_mask, points, 1)
-    bool_mask.astype(bool)
-    return bool_mask
+    # bool_mask.astype(bool)
+    return bool_mask.astype(bool)
 
 
 def get_bbox_from_bool_mask(bool_mask: np.ndarray) -> Optional[List[int]]:

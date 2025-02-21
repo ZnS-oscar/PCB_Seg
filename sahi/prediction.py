@@ -42,7 +42,7 @@ class ObjectPrediction(ObjectAnnotation):
 
     def __init__(
         self,
-        bbox: Optional[List[int]] = None,
+        bbox: Optional[List[int]] = None, 
         category_id: Optional[int] = None,
         category_name: Optional[str] = None,
         segmentation: Optional[List[List[float]]] = None,
