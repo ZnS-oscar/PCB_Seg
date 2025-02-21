@@ -69,7 +69,7 @@ class SEGAPI:
         return {str(i): str(i) for i in range(201)}
     @staticmethod
     def convert_to_segresult(object_prediction_list):
-        print("I have to say the object_prediction_list len is ",len(object_prediction_list))
+        # print("I have to say the object_prediction_list len is ",len(object_prediction_list))
         if not object_prediction_list:
             # 如果列表为空，创建一个全零的掩码
             mask = np.zeros((1, 1), dtype=np.int32)
@@ -105,7 +105,7 @@ class SEGAPI:
 
         # 创建 SegResult 对象
         segresult = SegResult(combined_mask, component_results)
-        print("the segresult success")
+        # print("the segresult success")
         cv2.imwrite("the mask.png",segresult.mask)
         return segresult
     # take in get_sliced_prediction

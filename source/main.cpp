@@ -207,7 +207,7 @@ void simple_thread_test(const std::string& model_path,
 
 int main(int argc, char* argv[]) {
     // std::string model_path = "/root/autodl-tmp/sahi/demo/models/yolov8n-segdy.onnx";
-    std::string model_path = "/root/autodl-tmp/sahi/demo/models/synpcbseg.onnx";
+    std::string model_path = "/root/autodl-tmp/sahi/models/synpcbseg.onnx";
     // std::string image_path = "/root/autodl-tmp/sahi/input/input/a1a1.jpeg";
     // std::string model_path = "/root/autodl-tmp/sahi/demo/models/synpcbseg.onnx";
     std::string image_path="/root/autodl-tmp/sahi/input/input/pcb_0002_5768_0_1024_1024_200.png";
@@ -222,9 +222,9 @@ int main(int argc, char* argv[]) {
     signal(SIGINT, signal_handler);
 
     try {
-        // std::cout << "\n=== Starting Simple Thread Test ===" << std::endl;
-        // simple_thread_test(model_path, image_path, GPU_ID, GPU_MEM_GB);
-        // std::cout << "Simple thread test completed\n" << std::endl;
+        std::cout << "\n=== Starting Simple Thread Test ===" << std::endl;
+        simple_thread_test(model_path, image_path, GPU_ID, GPU_MEM_GB);
+        std::cout << "Simple thread test completed\n" << std::endl;
 
         // std::cout << "\n=== Starting Detailed Test ===" << std::endl;
         // detailed_test(model_path, image_path, GPU_ID, GPU_MEM_GB);
