@@ -171,3 +171,11 @@ cython_debug/
 *.jpg
 *.bmp
 *.jpeg
+
+#test files
+main.py
+main*.py
+tests/*
+docs/
+demo/
+

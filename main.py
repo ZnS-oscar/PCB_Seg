@@ -12,7 +12,7 @@ from sahi.utils.cv import read_image
 from sahi.utils.file import download_from_url
 from sahi.predict import get_prediction, get_sliced_prediction, predict
 from IPython.display import Image
-
+  
 
 # yolov8_onnx_model_path = "demo/models/yolo11n-seg.onnx"
 # yolo11n_model_path = "demo/models/synpcbseg.pt"

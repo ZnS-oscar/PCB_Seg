@@ -9,7 +9,7 @@ from sahi.utils.file import download_from_url
 from sahi.predict import get_prediction, get_sliced_prediction, predict
 from IPython.display import Image
 from sahi.segapi import SEGAPI
-import cv2
+import cv2 
 model_type = "yolov8onnx"
 model_path = "demo/models/synpcbseg.onnx"
 model_device = "cuda:0" # or 'cuda:0'
