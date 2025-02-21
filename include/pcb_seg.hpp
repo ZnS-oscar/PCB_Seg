@@ -22,6 +22,7 @@ public:
 
     Status evaluateSingle(const cv::Mat& bmp_image,  SegResult& cpp_segresult);
 
+    //TODO 未实现
     Status evaluateBatch(const std::vector<cv::Mat>& bmp_images,
                         const std::vector<cv::Mat>& tiff_images,
                         std::vector<cv::Mat>& masks);
@@ -29,7 +30,7 @@ public:
     // 线程安全的推理接口
     Status threadSafeInference(const cv::Mat& image,SegResult& cpp_segresult);
 
-    // 用于测试的详细推理接口
+    // 用于测试的详细推理接口 未实现
     Status testInference(const cv::Mat& image, int thread_id, 
                         std::atomic<int>& successful_count,
                         std::atomic<int>& failed_count,

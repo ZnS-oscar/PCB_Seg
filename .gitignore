@@ -176,5 +176,4 @@ cython_debug/
 main.py
 main*.py
 tests/*
-docs
 demo

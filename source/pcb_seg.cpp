@@ -85,16 +85,12 @@ Status SegmentationEvaluator::evaluateSingle(const cv::Mat& bmp_image,  SegResul
 
             // 转换图像为numpy数组
             py::array_t<uint8_t> array;
-            if (bmp_image.channels() == 3) {
-                array = py::array_t<uint8_t>(
-                    {bmp_image.rows, bmp_image.cols, bmp_image.channels()}, 
-                    bmp_image.data
-                );
-            } else {
-                return Status::ERR_INPUT;
-            }
-
+            array = py::array_t<uint8_t>(
+                {bmp_image.rows, bmp_image.cols, bmp_image.channels()}, 
+                bmp_image.data
+            );
             // 调用Python模型进行预测
+           
             py::object py_result = model_instance_.attr("infer")(array);
 
             //转换结果为SegResult

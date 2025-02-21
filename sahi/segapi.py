@@ -110,7 +110,7 @@ class SEGAPI:
         return segresult
     # take in get_sliced_prediction
     def infer(self,image,postprocess_type:str="GREEDYNMM",postprocess_match_threshold:float=0.5,postprocess_match_metric:str="IOS",postprocess_class_agnostic:bool=False,perform_standard_pred:bool=True):
-
+        image=image[:,:,:3]
         time_start = time.time()
         slice_image_result = slice_image(
             image=image,
